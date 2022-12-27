@@ -3,8 +3,20 @@ import { ImageGalleryItem } from './ImageGalleryItem';
 import style from './styles/ImageGallery.module.css';
 import { Modal } from './Modal';
 import { Loader } from './Loader';
+import PropTypes from 'prop-types';
 
 export class ImageGallery extends Component {
+  static propTypes = {
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        webformatURL: PropTypes.string.isRequired,
+        tags: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    isLoad: PropTypes.bool.isRequired,
+  };
+
   state = {
     clickedImageId: 0,
   };
@@ -55,3 +67,14 @@ export class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  isLoad: PropTypes.bool.isRequired,
+};

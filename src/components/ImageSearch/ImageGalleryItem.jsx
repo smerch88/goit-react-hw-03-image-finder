@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import style from './styles/ImageGalleryItem.module.css';
 
 export const ImageGalleryItem = ({ src, dataid, alt }) => {
@@ -14,4 +15,10 @@ export const ImageGalleryItem = ({ src, dataid, alt }) => {
       </li>
     </>
   );
+};
+
+ImageGalleryItem.propTypes = {
+  src: PropTypes.string.isRequired,
+  dataid: PropTypes.number.isRequired,
+  alt: PropTypes.string.isRequired,
 };
