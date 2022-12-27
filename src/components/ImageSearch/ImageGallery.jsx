@@ -1,50 +1,57 @@
+import { Component } from 'react';
 import { ImageGalleryItem } from './ImageGalleryItem';
 import style from './styles/ImageGallery.module.css';
 import { Modal } from './Modal';
-import { useState } from 'react';
 import { Loader } from './Loader';
 
-export const ImageGallery = ({ images, isLoad }) => {
-  const [clikedImageId, setClikedImageId] = useState(0);
-
-  const onClickHandler = event => {
-    setClikedImageId(Number(event.target.dataset.id));
+export class ImageGallery extends Component {
+  state = {
+    clickedImageId: 0,
   };
 
-  const onClose = event => {
+  onClickHandler = event => {
+    this.setState({ clickedImageId: Number(event.target.dataset.id) });
+  };
+
+  onClose = event => {
     if (event?.target === event?.currentTarget) {
-      setClikedImageId(0);
+      this.setState({ clickedImageId: 0 });
     }
   };
 
-  const closeModalOnEsc = event => {
+  closeModalOnEsc = event => {
     if (event.key === 'Escape') {
-      onClose();
+      this.onClose();
     }
   };
 
-  return (
-    <>
-      <ul className={style.ImageGallery} onClick={onClickHandler}>
-        {images.map(image => (
-          <ImageGalleryItem
-            key={image.id}
-            src={image.webformatURL}
-            dataid={image.id}
-            alt={image.tags}
+  render() {
+    const { images, isLoad } = this.props;
+    const { clickedImageId } = this.state;
+
+    return (
+      <>
+        <ul className={style.ImageGallery} onClick={this.onClickHandler}>
+          {images.map(image => (
+            <ImageGalleryItem
+              key={image.id}
+              src={image.webformatURL}
+              dataid={image.id}
+              alt={image.tags}
+            />
+          ))}
+        </ul>
+        {isLoad && <Loader size={50} />}
+        {clickedImageId !== 0 ? (
+          <Modal
+            src={images.filter(image => image.id === clickedImageId)}
+            onClose={this.onClose}
+            closeModalOnEsc={this.closeModalOnEsc}
           />
-        ))}
-      </ul>
-      {isLoad && <Loader size={50} />}
-      {clikedImageId !== 0 ? (
-        <Modal
-          src={images.filter(image => image.id === clikedImageId)}
-          onClose={onClose}
-          closeModalOnEsc={closeModalOnEsc}
-        />
-      ) : (
-        ''
-      )}
-    </>
-  );
-};
+        ) : (
+          ''
+        )}
+      </>
+    );
+  }
+}

@@ -1,46 +1,57 @@
+import React, { Component } from 'react';
 import style from './ImageSearch.module.css';
-
 import { fetchImages } from '../services/api';
-import { useState, useEffect } from 'react';
 import { Form } from './Searchbar';
 import { ImageGallery } from './ImageGallery';
 import { Button } from './Button';
 
-export const ImageSearch = () => {
-  const [submittedName, setSubmittedName] = useState('');
-  const [submittedNumber, setSubmittedNumber] = useState(1);
-  const [images, setImages] = useState([]);
-  const [isLoad, setIsLoad] = useState(false);
-
-  const loadMore = () => {
-    setSubmittedNumber(submittedNumber + 1);
+export class ImageSearch extends Component {
+  state = {
+    submittedName: '',
+    submittedNumber: 1,
+    images: [],
+    isLoad: false,
   };
 
-  const handleSubmit = inputValue => {
-    setSubmittedName(inputValue);
-    setImages([]);
+  loadMore = () => {
+    this.setState(prevState => ({
+      submittedNumber: prevState.submittedNumber + 1,
+    }));
   };
 
-  useEffect(() => {
-    if (submittedName) {
-      setIsLoad(true);
-      async function fetchData() {
-        const result = await fetchImages(submittedName, submittedNumber);
-        setImages([...images, ...result.hits]);
-        setIsLoad(false);
-      }
-      fetchData();
+  handleSubmit = inputValue => {
+    this.setState({ submittedName: inputValue, images: [] });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.submittedName !== this.state.submittedName) {
+      this.setState({ isLoad: true });
+      this.fetchData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submittedNumber, submittedName]);
+    if (prevState.submittedNumber !== this.state.submittedNumber) {
+      this.setState({ isLoad: true });
+      this.fetchData();
+    }
+  }
 
-  return (
-    <>
+  fetchData = async () => {
+    const { submittedName, submittedNumber } = this.state;
+    const result = await fetchImages(submittedName, submittedNumber);
+    this.setState(prevState => ({
+      images: [...prevState.images, ...result.hits],
+      isLoad: false,
+    }));
+  };
+
+  render() {
+    const { images, isLoad, submittedName } = this.state;
+
+    return (
       <div className={style.App}>
-        <Form onSubmit={handleSubmit} />
+        <Form onSubmit={this.handleSubmit} />
         <ImageGallery images={images} isLoad={isLoad} />
-        {submittedName && !isLoad && <Button onClick={loadMore} />}
+        {submittedName && !isLoad && <Button onClick={this.loadMore} />}
       </div>
-    </>
-  );
-};
+    );
+  }
+}
