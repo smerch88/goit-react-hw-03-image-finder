@@ -1,9 +1,9 @@
-import FeedBack from "./FeedBack/FeedBack";
+import { ImageSearch } from './ImageSearch/ImageSearch';
 
 export const App = () => {
   return (
     <>
-      <FeedBack />
+      <ImageSearch />
     </>
   );
 };
