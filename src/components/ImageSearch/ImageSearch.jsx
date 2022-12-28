@@ -26,6 +26,7 @@ export class ImageSearch extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.submittedName !== this.state.submittedName) {
       this.setState({ isLoad: true });
+      this.setState({ submittedNumber: 1 });
       this.fetchData();
     }
     if (prevState.submittedNumber !== this.state.submittedNumber) {
